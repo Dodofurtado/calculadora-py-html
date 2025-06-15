@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Moderna</title>
+    <style>
+        :root {
+            --primary-bg: linear-gradient(135deg, #232526, #414345);
+            --calc-bg: #2c2f34;
+            --display-bg: #232526;
+            --button-bg: #414345;
+            --button-hover: #232526;
+            --text-color: #fff;
+            --shadow-color: rgba(31, 38, 135, 0.37);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: var(--primary-bg);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .calc-container {
+            background: var(--calc-bg);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 var(--shadow-color);
+            padding: 30px 20px;
+            width: 320px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .display {
+            width: 100%;
+            height: 60px;
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 20px;
+            font-size: 2em;
+            text-align: right;
+            padding: 10px;
+            background: var(--display-bg);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .display:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            padding: 20px;
+            border: none;
+            border-radius: 10px;
+            background: var(--button-bg);
+            color: var(--text-color);
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            background: var(--button-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .span-two {
+            grid-column: span 2;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 360px) {
+            .calc-container {
+                width: 95%;
+                padding: 20px 15px;
+            }
+
+            button {
+                padding: 15px;
+                font-size: 1em;
+            }
+        }    </style>
+</head>
+<body>
+    <div class="calc-container">
+        <input type="text" id="display" class="display" readonly>
+        <div class="buttons">
+            <button onclick="add('7')">7</button>
+            <button onclick="add('8')">8</button>
+            <button onclick="add('9')">9</button>
+            <button onclick="add('/')" style="color: #ff9800">÷</button>
+            <button onclick="add('4')">4</button>
+            <button onclick="add('5')">5</button>
+            <button onclick="add('6')">6</button>
+            <button onclick="add('*')" style="color: #ff9800">×</button>
+            <button onclick="add('1')">1</button>
+            <button onclick="add('2')">2</button>
+            <button onclick="add('3')">3</button>
+            <button onclick="add('-')" style="color: #ff9800">-</button>
+            <button onclick="add('0')">0</button>
+            <button onclick="add('.')">.</button>
+            <button onclick="limpar()" style="color: #f44336">C</button>
+            <button onclick="add('+')" style="color: #ff9800">+</button>
+            <button class="span-two" onclick="calcular()" style="background: #4CAF50">=</button>
+        </div>
+    </div>    <script>
+        const display = document.getElementById('display');
+        let ultimaOperacaoFoiIgual = false;
+        
+        // Teclas permitidas
+        const teclas = new Set(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '+', '-', '*', '/', 'Enter', 'Escape', 'Backspace']);
+        
+        // Adiciona evento de teclado
+        document.addEventListener('keydown', (e) => {
+            if (teclas.has(e.key)) {
+                e.preventDefault();
+                if (e.key === 'Enter') {
+                    calcular();
+                } else if (e.key === 'Escape') {
+                    limpar();
+                } else if (e.key === 'Backspace') {
+                    display.value = display.value.slice(0, -1);
+                } else {
+                    add(e.key);
+                }
+            }
+        });
+
+        function add(char) {
+            // Se for um número e a última operação foi igual, limpa o display
+            if ('0123456789'.includes(char) && ultimaOperacaoFoiIgual) {
+                display.value = char;
+                ultimaOperacaoFoiIgual = false;
+            }
+            // Se for um operador, mantém o resultado anterior e adiciona o operador
+            else if ('+-*/'.includes(char)) {
+                display.value += char;
+                ultimaOperacaoFoiIgual = false;
+            }
+            // Se for um número e não houve igual antes, apenas adiciona
+            else if ('0123456789'.includes(char)) {
+                display.value += char;
+            }
+            // Para outros caracteres (como ponto decimal)
+            else {
+                display.value += char;
+                ultimaOperacaoFoiIgual = false;
+            }
+
+            if (display.value === 'Erro' || display.value === 'Expressão inválida') {
+                display.value = char;
+            }
+        }
+
+        function limpar() {
+            display.value = '';
+            ultimaOperacaoFoiIgual = false;
+        }
+
+        async function calcular() {
+            try {
+                const response = await fetch('/calcular', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ expressao: display.value })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Erro na requisição');
+                }
+                
+                const data = await response.json();
+                display.value = data.resultado;
+                ultimaOperacaoFoiIgual = true;
+            } catch (error) {
+                console.error('Erro:', error);
+                display.value = 'Erro';
+                ultimaOperacaoFoiIgual = true;
+            }
+        }
+    </script>
+</body>
+</html>
