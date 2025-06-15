@@ -2,8 +2,6 @@
 
 Uma calculadora moderna com interface gráfica elegante, construída com Python, Flask e PyWebview.
 
-![Preview da Calculadora](preview.png)
-
 ## Características
 
 - Interface moderna e responsiva
@@ -22,7 +20,7 @@ Uma calculadora moderna com interface gráfica elegante, construída com Python,
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/seu-usuario/calculadora-moderna.git
+git clone https://github.com/Dodofurtado/calculadora-py-html.git
 cd calculadora-moderna
 ```
 
